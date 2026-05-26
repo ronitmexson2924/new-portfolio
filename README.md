@@ -41,7 +41,7 @@ To run this project locally:
 
 1. **Clone the repository** (if you haven't already):
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/ronitmexson2924/new-portfolio.git
    cd new-portfolio-website
    ```
 
