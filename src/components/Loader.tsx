@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const LOADER_DURATION = 2400; // ms before exit starts
 const EXIT_DURATION   = 800;  // ms for slide-up exit
