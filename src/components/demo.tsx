@@ -11,14 +11,12 @@ import {
 } from 'lucide-react';
 import heroImg from '../assets/hero.png';
 
-// GitHub icon — removed from lucide-react; using the official mark SVG instead
 const GithubIcon = ({ size = 24 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
     <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
   </svg>
 );
 
-// LinkedIn icon — removed from lucide-react; using the official mark SVG instead
 const LinkedinIcon = ({ size = 24 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
@@ -154,7 +152,6 @@ export default function Portfolio() {
   const [skillsVisible, setSkillsVisible] = useState(false);
   const skillsGridRef = useRef<HTMLDivElement>(null);
 
-  // Auto-reveal skill bars when the section scrolls into view
   useEffect(() => {
     const el = skillsGridRef.current;
     if (!el) return;
@@ -168,24 +165,147 @@ export default function Portfolio() {
 
   const proj = projects[activeProject];
 
+  // ── Shared squared preview window content ─────────────────────────────────
+  // Rendered inside a flex-column square container; used on both desktop
+  // (right column) and mobile (inline, after tech tags).
+  const previewWindowInner = (
+    <>
+      {/* Browser chrome bar */}
+      <div
+        style={{
+          display:        'flex',
+          alignItems:     'center',
+          gap:             6,
+          padding:        '7px 10px',
+          borderBottom:   '1px solid rgba(255,255,255,0.09)',
+          background:     'rgba(255,255,255,0.05)',
+          flexShrink:      0,
+        }}
+      >
+        {/* Traffic-light dots */}
+        {['rgba(255,95,86,0.75)', 'rgba(255,189,68,0.75)', 'rgba(40,200,100,0.75)'].map((bg) => (
+          <span
+            key={bg}
+            style={{ width: 8, height: 8, borderRadius: '50%', background: bg, display: 'block', flexShrink: 0 }}
+          />
+        ))}
+        {/* Address bar */}
+        <div
+          style={{
+            flex:          1,
+            marginLeft:    4,
+            background:    'rgba(255,255,255,0.07)',
+            border:        '1px solid rgba(255,255,255,0.1)',
+            borderRadius:   4,
+            padding:       '3px 8px',
+            overflow:      'hidden',
+          }}
+        >
+          <span
+            style={{
+              fontSize:      9,
+              color:         'rgba(255,255,255,0.4)',
+              overflow:      'hidden',
+              textOverflow:  'ellipsis',
+              whiteSpace:    'nowrap',
+              display:       'block',
+            }}
+          >
+            {proj.live === '#' ? 'No live demo available' : proj.live.replace(/^https?:\/\//, '')}
+          </span>
+        </div>
+        {proj.live !== '#' && (
+          <a
+            href={proj.live}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Open in new tab"
+            style={{ color: 'rgba(255,255,255,0.35)', flexShrink: 0, display: 'flex', alignItems: 'center' }}
+          >
+            <ExternalLink size={11} />
+          </a>
+        )}
+      </div>
+
+      {/* Preview viewport — fills remaining square height */}
+      {proj.live !== '#' ? (
+        <div style={{ flex: 1, position: 'relative', overflow: 'hidden', background: '#0d0d0d' }}>
+          {/*
+            The iframe is 200% × 200% of the container, then scaled 0.5 via
+            transform so it fills the container exactly at half resolution.
+            `position: absolute` + top/left:0 ensures the height percentage
+            is relative to the positioned parent, not the flex item.
+          */}
+          <iframe
+            key={proj.id}
+            src={proj.live}
+            title={`Preview — ${proj.title}`}
+            loading="lazy"
+            style={{
+              position:        'absolute',
+              top:              0,
+              left:             0,
+              width:           '200%',
+              height:          '200%',
+              border:          'none',
+              transform:        'scale(0.5)',
+              transformOrigin: 'top left',
+              pointerEvents:   'none',
+            }}
+          />
+          {/* Bottom fade */}
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 28, background: 'linear-gradient(to top, #111, transparent)', pointerEvents: 'none' }} />
+          {/* Accent tint */}
+          <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(135deg, ${proj.accent}18 0%, transparent 60%)`, pointerEvents: 'none' }} />
+        </div>
+      ) : (
+        <div
+          style={{
+            flex:           1,
+            display:        'flex',
+            flexDirection:  'column',
+            alignItems:     'center',
+            justifyContent: 'center',
+            gap:             8,
+            color:          'rgba(255,255,255,0.18)',
+            background:     'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.015) 10px, rgba(255,255,255,0.015) 20px)',
+          }}
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5 }}>
+            <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+          </svg>
+          <span style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.18em', fontWeight: 700 }}>
+            No live demo
+          </span>
+        </div>
+      )}
+    </>
+  );
+
+  // Shared outer box styles for the squared window
+  const squareBoxStyle: React.CSSProperties = {
+    display:        'flex',
+    flexDirection:  'column',
+    borderRadius:    10,
+    overflow:       'hidden',
+    border:         '1px solid rgba(255,255,255,0.14)',
+    boxShadow:      '0 16px 48px rgba(0,0,0,0.5)',
+    background:     '#111',
+    aspectRatio:    '1',   // makes the box perfectly square
+  };
+
   return (
     <>
       <style>{`
         @keyframes projectEnter {
-          from {
-            opacity: 0;
-            transform: translateY(8px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0px);
-          }
+          from { opacity: 0; transform: translateY(8px); }
+          to   { opacity: 1; transform: translateY(0px); }
         }
       `}</style>
       <FlowArt aria-label="Ronit Mexson — Portfolio">
 
         {/* ══════════════════════════════════════
-            01 — HERO
+            01 — HERO  (unchanged)
         ══════════════════════════════════════ */}
         <FlowSection
           aria-label="Hero — About Ronit Mexson"
@@ -197,9 +317,7 @@ export default function Portfolio() {
 
           <hr className="border-0 border-t border-white/10" />
 
-          {/* Main hero row — stacks on mobile */}
           <div className="flex flex-col-reverse items-center gap-8 sm:flex-row sm:items-center sm:justify-between sm:gap-[4vw]">
-            {/* Left: copy */}
             <div className="flex flex-col gap-5 w-full sm:max-w-[55%]">
               <div>
                 <p className="text-[10px] sm:text-xs font-bold tracking-[0.25em] uppercase text-white mb-3">
@@ -232,13 +350,10 @@ export default function Portfolio() {
               </div>
             </div>
 
-            {/* Right: photo — premium frame, hidden on very small screens */}
             <div
               className="relative shrink-0 group self-center hidden xs:block"
               style={{ width: 'clamp(120px, 22vw, 300px)' }}
             >
-
-              {/* ── Ambient glow behind the frame ── */}
               <div
                 className="absolute pointer-events-none transition-all duration-700 opacity-60 group-hover:opacity-100 group-hover:scale-110"
                 style={{
@@ -248,8 +363,6 @@ export default function Portfolio() {
                   zIndex: 0,
                 }}
               />
-
-              {/* ── Outer offset ghost border ── */}
               <div
                 className="absolute pointer-events-none transition-transform duration-500 group-hover:rotate-3 group-hover:translate-x-1 group-hover:-translate-y-1"
                 style={{
@@ -259,8 +372,6 @@ export default function Portfolio() {
                   zIndex: 0,
                 }}
               />
-
-              {/* ── Main photo frame ── */}
               <div
                 className="relative overflow-hidden transition-all duration-500 group-hover:-translate-y-2 group-hover:shadow-[0_24px_48px_rgba(0,0,0,0.6)]"
                 style={{
@@ -271,7 +382,6 @@ export default function Portfolio() {
                   zIndex: 1,
                 }}
               >
-                {/* Photo */}
                 <img
                   src={heroImg}
                   alt="Ronit Mexson"
@@ -289,14 +399,10 @@ export default function Portfolio() {
                     }
                   }}
                 />
-
-                {/* Bottom gradient vignette */}
                 <div
                   className="absolute inset-0 pointer-events-none"
                   style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.15) 40%, transparent 65%)' }}
                 />
-
-                {/* ── Corner tick marks ── */}
                 {(['top-2.5 left-2.5 border-t border-l',
                    'top-2.5 right-2.5 border-t border-r',
                    'bottom-2.5 left-2.5 border-b border-l',
@@ -307,11 +413,7 @@ export default function Portfolio() {
                     style={{ borderColor: 'rgba(255,255,255,0.35)' }}
                   />
                 ))}
-
-                {/* ── Floating status badge ── */}
-                <div
-                  className="absolute bottom-3.5 left-0 right-0 flex justify-center pointer-events-none"
-                >
+                <div className="absolute bottom-3.5 left-0 right-0 flex justify-center pointer-events-none">
                   <div
                     className="flex items-center gap-1.5 px-3 py-1.5 transition-all duration-300 group-hover:bg-white/10"
                     style={{
@@ -329,12 +431,10 @@ export default function Portfolio() {
                 </div>
               </div>
             </div>
-
           </div>
 
           <hr className="border-0 border-t border-white/10" />
 
-          {/* Stats row — 2-col grid on mobile, flex on larger */}
           <div className="grid grid-cols-2 gap-x-[6vw] gap-y-4 sm:flex sm:flex-wrap sm:gap-[4vw]">
             {[
               { val: '5+', lbl: 'Projects' },
@@ -351,6 +451,10 @@ export default function Portfolio() {
 
         {/* ══════════════════════════════════════
             02 — PROJECTS
+            Desktop/tablet: left column (title, desc, tech, CTAs) +
+                            right column (squared preview window)
+            Mobile:         stacked — title → desc → tech → square
+                            preview → CTAs
         ══════════════════════════════════════ */}
         <FlowSection
           aria-label="Projects"
@@ -380,189 +484,106 @@ export default function Portfolio() {
             ))}
           </div>
 
-          {/* Active project detail */}
-          {/* <div
-            key={proj.id}
-            className="flex flex-col gap-5"
-            style={{ animation: 'projectEnter 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) both' }}
-          > */}
-            <div>
-              <div className="flex items-center gap-2.5 mb-3">
-                <span
-                  className="w-2.5 h-2.5 shrink-0"
-                  style={{ backgroundColor: proj.accent }}
-                />
-                <p className="text-[10px] font-bold uppercase tracking-widest text-white/50">
-                  0{proj.id} — Project
-                </p>
-              </div>
-              <h2
-                className="font-bold leading-[0.88] uppercase tracking-tight"
-                style={{ fontSize: 'clamp(2rem, 7vw, 8rem)', wordBreak: 'break-word' }}
-              >
-                {proj.title}
-              </h2>
-            </div>
+          {/* ── Main row: content left, preview right ───────────────────── */}
+          <div className="flex flex-col sm:flex-row sm:items-start sm:gap-8 lg:gap-12">
 
-            <p
-              className="leading-relaxed text-white/70"
-              style={{ fontSize: 'clamp(0.875rem, 1.3vw, 1.1rem)', maxWidth: '55ch' }}
-            >
-              {proj.description}
-            </p>
+            {/* Left column — grows to fill available width */}
+            <div className="flex flex-col gap-5 flex-1 min-w-0">
 
-            <div className="flex flex-wrap gap-2">
-              {proj.tech.map((t) => (
-                <span
-                  key={t}
-                  className="text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 border border-white/20 text-white/80"
-                  style={{ background: 'rgba(255,255,255,0.06)' }}
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
-
-            {/* ── Mini browser preview window ─────────────────────────── */}
-            <div
-              style={{
-                borderRadius:  10,
-                overflow:      'hidden',
-                border:        `1px solid rgba(255,255,255,0.14)`,
-                boxShadow:     '0 16px 48px rgba(0,0,0,0.5)',
-                background:    '#111',
-                willChange:    'transform',
-              }}
-            >
-              {/* Browser chrome bar */}
-              <div
-                style={{
-                  display:        'flex',
-                  alignItems:     'center',
-                  gap:            8,
-                  padding:        '8px 12px',
-                  borderBottom:   '1px solid rgba(255,255,255,0.09)',
-                  background:     'rgba(255,255,255,0.05)',
-                }}
-              >
-                {/* Traffic-light dots */}
-                {['rgba(255,95,86,0.75)', 'rgba(255,189,68,0.75)', 'rgba(40,200,100,0.75)'].map((bg) => (
-                  <span key={bg} style={{ width: 10, height: 10, borderRadius: '50%', background: bg, display: 'block', flexShrink: 0 }} />
-                ))}
-                {/* Address bar */}
-                <div
-                  style={{
-                    flex:          1,
-                    margin:        '0 8px',
-                    display:       'flex',
-                    alignItems:    'center',
-                    gap:           6,
-                    background:    'rgba(255,255,255,0.07)',
-                    border:        '1px solid rgba(255,255,255,0.1)',
-                    borderRadius:  6,
-                    padding:       '4px 10px',
-                    overflow:      'hidden',
-                  }}
-                >
-                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-                  </svg>
-                  <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
-                    {proj.live === '#' ? 'No live demo available' : proj.live.replace(/^https?:\/\//, '')}
-                  </span>
-                </div>
-                {/* Open-in-new-tab button */}
-                {proj.live !== '#' && (
-                  <a
-                    href={proj.live}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title="Open in new tab"
-                    style={{ color: 'rgba(255,255,255,0.35)', flexShrink: 0, display: 'flex', alignItems: 'center' }}
-                    className="hover:text-white transition-colors"
-                  >
-                    <ExternalLink size={12} />
-                  </a>
-                )}
-              </div>
-
-              {/* Preview viewport */}
-              {proj.live !== '#' ? (
-                <div style={{ position: 'relative', width: '100%', height: 210, overflow: 'hidden', background: '#0d0d0d' }}>
-                  {/* Scaled-down iframe — 2× wide + 2× tall, scaled 50% → fills the container */}
-                  <iframe
-                    key={proj.id}           /* remount when project changes */
-                    src={proj.live}
-                    title={`Preview — ${proj.title}`}
-                    loading="lazy"
-                    style={{
-                      width:           '200%',
-                      height:          '420px',
-                      border:          'none',
-                      transform:        'scale(0.5)',
-                      transformOrigin: 'top left',
-                      pointerEvents:   'none',  /* don't intercept clicks */
-                    }}
+              {/* Project header */}
+              <div>
+                <div className="flex items-center gap-2.5 mb-3">
+                  <span
+                    className="w-2.5 h-2.5 shrink-0"
+                    style={{ backgroundColor: proj.accent }}
                   />
-                  {/* Gradient fade at bottom to blend into chrome */}
-                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 48, background: 'linear-gradient(to top, #111, transparent)', pointerEvents: 'none' }} />
-                  {/* Subtle accent tint overlay matching project accent */}
-                  <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(135deg, ${proj.accent}10 0%, transparent 60%)`, pointerEvents: 'none' }} />
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-white/50">
+                    0{proj.id} — Project
+                  </p>
                 </div>
-              ) : (
-                <div
-                  style={{
-                    height:         160,
-                    display:        'flex',
-                    flexDirection:  'column',
-                    alignItems:     'center',
-                    justifyContent: 'center',
-                    gap:            10,
-                    color:          'rgba(255,255,255,0.18)',
-                    background:     'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.015) 10px, rgba(255,255,255,0.015) 20px)',
-                  }}
+                <h2
+                  className="font-bold leading-[0.88] uppercase tracking-tight"
+                  style={{ fontSize: 'clamp(2rem, 7vw, 8rem)', wordBreak: 'break-word' }}
                 >
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5 }}>
-                    <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
-                  </svg>
-                  <span style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.18em', fontWeight: 700 }}>
-                    No live demo available
+                  {proj.title}
+                </h2>
+              </div>
+
+              {/* Description */}
+              <p
+                className="leading-relaxed text-white/70"
+                style={{ fontSize: 'clamp(0.875rem, 1.3vw, 1.1rem)', maxWidth: '55ch' }}
+              >
+                {proj.description}
+              </p>
+
+              {/* Tech tags */}
+              <div className="flex flex-wrap gap-2">
+                {proj.tech.map((t) => (
+                  <span
+                    key={t}
+                    className="text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 border border-white/20 text-white/80"
+                    style={{ background: 'rgba(255,255,255,0.06)' }}
+                  >
+                    {t}
                   </span>
+                ))}
+              </div>
+
+              {/* ── Mobile-only squared preview (below tech tags) ────────── */}
+              {/* Hidden on sm+ because desktop shows it in the right column  */}
+              <div className="sm:hidden" style={{ maxWidth: 300 }}>
+                <div style={{ ...squareBoxStyle, boxShadow: '0 8px 24px rgba(0,0,0,0.5)' }}>
+                  {previewWindowInner}
                 </div>
-              )}
+              </div>
+
+              {/* CTA links */}
+              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <a
+                  href={proj.live}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 bg-white text-black text-xs font-bold uppercase tracking-widest px-6 py-3 hover:bg-gray-200 transition-colors w-full sm:w-auto"
+                >
+                  <ExternalLink size={14} /> Live Demo
+                </a>
+                <a
+                  href={proj.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 border border-white/30 text-white text-xs font-bold uppercase tracking-widest px-6 py-3 hover:bg-white/10 hover:border-white/60 transition-colors w-full sm:w-auto"
+                >
+                  <GithubIcon size={14} /> Code
+                </a>
+              </div>
             </div>
 
-          <hr className="border-0 border-t border-white/10" />
+            {/* ── Desktop / tablet squared preview (right column) ─────────── */}
+            {/* Hidden on mobile; the inline version above handles that case    */}
+            <div
+              className="hidden sm:block shrink-0 self-start"
+              style={{ width: 'clamp(190px, 21vw, 260px)' }}
+            >
+              <div style={squareBoxStyle}>
+                {previewWindowInner}
+              </div>
+            </div>
 
-          {/* CTA links — stack on mobile */}
-          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <a
-              href={proj.live}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 bg-white text-black text-xs font-bold uppercase tracking-widest px-6 py-3 hover:bg-gray-200 transition-colors w-full sm:w-auto"
-            >
-              <ExternalLink size={14} /> Live Demo
-            </a>
-            <a
-              href={proj.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 border border-white/30 text-white text-xs font-bold uppercase tracking-widest px-6 py-3 hover:bg-white/10 hover:border-white/60 transition-colors w-full sm:w-auto"
-            >
-              <GithubIcon size={14} /> Code
-            </a>
           </div>
         </FlowSection>
 
         {/* ══════════════════════════════════════
             03 — SKILLS
+            Mobile:         single column (unchanged)
+            Tablet / laptop: 2-column grid with larger pills and padding;
+                             DevOps & Cloud spans both columns since it's the
+                             longest category and prevents an awkward half-row.
         ══════════════════════════════════════ */}
         <FlowSection
           aria-label="Skills"
           style={{ backgroundColor: '#F5F0E6', color: '#1a1a1a' }}
         >
-          {/* Inject skill hover + auto-reveal styles */}
           <style>{`
             .skill-col { transition: background 0.3s ease; }
             .skill-col:hover { background: var(--col-hover-bg) !important; }
@@ -575,28 +596,28 @@ export default function Portfolio() {
               transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1);
               width: 0 !important;
             }
-            /* Reveal on hover (desktop) */
             .skill-col:hover .skill-bar-fill { width: var(--bar-w) !important; }
-            /* Auto-reveal when section enters viewport (all devices) */
             .skills-revealed .skill-bar-fill { width: var(--bar-w) !important; }
             .skill-dot { transition: transform 0.3s ease; }
           `}</style>
 
-          <p className="text-xs font-bold uppercase tracking-[0.2em]" style={{ color: 'rgba(0,0,0,0.4)' }}>03 — Skills</p>
+          <p className="text-xs font-bold uppercase tracking-[0.2em]" style={{ color: 'rgba(0,0,0,0.4)' }}>
+            03 — Skills
+          </p>
 
           <hr className="border-0 border-t" style={{ borderColor: 'rgba(0,0,0,0.08)' }} />
 
           <div className="flex items-end justify-between gap-8 flex-wrap">
             <h2
               className="font-bold leading-[0.88] uppercase tracking-tight"
-              style={{ fontSize: 'clamp(2.5rem, 7vw, 6.5rem)', color: '#1a1a1a' }}
+              style={{ fontSize: 'clamp(2.5rem, 7vw, 8rem)', color: '#1a1a1a' }}
             >
               What I<br />Know
             </h2>
             <div className="flex flex-col items-end gap-2 pb-1">
               <span
                 className="font-black leading-none select-none"
-                style={{ fontSize: 'clamp(3rem,5vw,5rem)', color: 'rgba(0,0,0,0.06)', letterSpacing: '-0.04em' }}
+                style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)', color: 'rgba(0,0,0,0.06)', letterSpacing: '-0.04em' }}
               >
                 30+
               </span>
@@ -608,10 +629,17 @@ export default function Portfolio() {
 
           <hr className="border-0 border-t" style={{ borderColor: 'rgba(0,0,0,0.08)' }} />
 
-          {/* Vertical skill rows — one full-width band per category, no orphan gap */}
+          {/*
+            ── Skill grid ───────────────────────────────────────────────────
+            Mobile:          1 column (flex-col, as before)
+            lg (laptop+):    2 columns — 4 categories pair up, DevOps spans
+                             both columns so the grid ends cleanly.
+            The 1px gaps between cells are created via a background color on
+            the grid container that shows through between the white cells.
+          */}
           <div
             ref={skillsGridRef}
-            className={`flex flex-col gap-[1px]${skillsVisible ? ' skills-revealed' : ''}`}
+            className={`grid grid-cols-1 lg:grid-cols-2 gap-[1px]${skillsVisible ? ' skills-revealed' : ''}`}
             style={{ background: 'rgba(0,0,0,0.06)', borderRadius: '12px', overflow: 'hidden' }}
           >
             {skillCategories.map((cat, ci) => {
@@ -630,10 +658,21 @@ export default function Portfolio() {
                 Docker: 5, Kubernetes: 10, AWS: 20, GCP: 5, Linux: 90, Git: 95, GitHub: 92,
               };
               const { color, soft, hover } = accents[ci];
+
+              // DevOps & Cloud (last item) spans both columns on lg so the
+              // grid ends with a full-width row rather than a half-empty one.
+              const isLast = ci === skillCategories.length - 1;
+
               return (
                 <div
                   key={cat.label}
-                  className="skill-col flex flex-col sm:flex-row sm:items-start gap-4 p-4 sm:p-5 cursor-default"
+                  className={[
+                    'skill-col flex flex-col sm:flex-row sm:items-start',
+                    // Mobile/tablet inner padding unchanged; lg gets extra breathing room
+                    'gap-4 p-4 sm:p-5 lg:p-7',
+                    'cursor-default',
+                    isLast ? 'lg:col-span-2' : '',
+                  ].join(' ')}
                   style={{
                     background: '#F5F0E6',
                     '--col-accent':      color,
@@ -642,13 +681,13 @@ export default function Portfolio() {
                   } as React.CSSProperties}
                 >
                   {/* Category label — fixed-width column on sm+ */}
-                  <div className="flex items-center gap-2 sm:w-36 shrink-0 sm:pt-1">
+                  <div className="flex items-center gap-2 sm:w-36 lg:w-44 shrink-0 sm:pt-1">
                     <span
                       className="skill-dot w-2 h-2 rounded-full shrink-0"
                       style={{ background: color }}
                     />
                     <span
-                      className="skill-cat-label text-[10px] font-bold uppercase tracking-[0.18em] transition-colors duration-300"
+                      className="skill-cat-label text-[10px] lg:text-[11px] font-bold uppercase tracking-[0.18em] transition-colors duration-300"
                       style={{ color: 'rgba(0,0,0,0.4)' }}
                     >
                       {cat.emoji}&nbsp; {cat.label}
@@ -661,14 +700,14 @@ export default function Portfolio() {
                     style={{ background: 'rgba(0,0,0,0.07)' }}
                   />
 
-                  {/* Skill pills — wrap freely, no orphan */}
-                  <div className="flex flex-wrap gap-2">
+                  {/* Skill pills */}
+                  <div className="flex flex-wrap gap-2 lg:gap-2.5">
                     {cat.items.map((skill, si) => {
                       const pct = proficiency[skill] ?? 70;
                       return (
                         <div
                           key={skill}
-                          className="skill-row flex flex-col gap-1.5 px-3 py-2"
+                          className="skill-row flex flex-col gap-1.5 px-3 py-2 lg:px-4 lg:py-2.5"
                           style={{
                             background:   'rgba(0,0,0,0.04)',
                             borderRadius:  8,
@@ -676,13 +715,13 @@ export default function Portfolio() {
                           }}
                         >
                           <span
-                            className="skill-name text-[11.5px] font-semibold leading-none transition-all duration-200"
+                            className="skill-name text-[11.5px] lg:text-[13px] font-semibold leading-none transition-all duration-200"
                             style={{ color: 'rgba(0,0,0,0.58)' }}
                           >
                             {skill}
                           </span>
                           <div
-                            className="h-[2.5px] rounded-full"
+                            className="h-[2.5px] lg:h-[3px] rounded-full"
                             style={{ background: 'rgba(0,0,0,0.08)' }}
                           >
                             <div
@@ -709,7 +748,7 @@ export default function Portfolio() {
             <div className="flex items-center gap-4">
               <span
                 className="font-black leading-none select-none"
-                style={{ fontSize: 'clamp(1.5rem,3vw,2.5rem)', color: 'rgba(0,0,0,0.12)', letterSpacing: '-0.04em' }}
+                style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', color: 'rgba(0,0,0,0.12)', letterSpacing: '-0.04em' }}
               >
                 30+
               </span>
@@ -732,9 +771,8 @@ export default function Portfolio() {
           </div>
         </FlowSection>
 
-
         {/* ══════════════════════════════════════
-            04 — CERTIFICATIONS
+            04 — CERTIFICATIONS  (unchanged)
         ══════════════════════════════════════ */}
         <FlowSection
           aria-label="Certifications"
@@ -753,7 +791,6 @@ export default function Portfolio() {
 
           <hr className="border-0 border-t border-white/20" />
 
-          {/* Compact cert grid — 1 col mobile, 2 col tablet, 4 col desktop */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {certifications.map((cert) => {
               const Icon = cert.icon;
@@ -769,7 +806,6 @@ export default function Portfolio() {
                       {cert.issuer}
                     </span>
                   </div>
-
                   <p
                     className="text-[13px] font-bold leading-snug text-white"
                     style={{
@@ -781,7 +817,6 @@ export default function Portfolio() {
                   >
                     {cert.title}
                   </p>
-
                   <div className="flex items-center justify-between mt-auto pt-1">
                     <span className="text-[11px] text-white/50 font-semibold">{cert.date}</span>
                     <button
@@ -798,7 +833,7 @@ export default function Portfolio() {
         </FlowSection>
 
         {/* ══════════════════════════════════════
-            05 — CONTACT
+            05 — CONTACT  (unchanged)
         ══════════════════════════════════════ */}
         <FlowSection
           aria-label="Contact"
@@ -820,7 +855,6 @@ export default function Portfolio() {
           <hr className="border-0 border-t border-white/10" />
 
           <div className="flex flex-col gap-8 sm:flex-row sm:flex-wrap sm:gap-[4vw] sm:items-start">
-            {/* Left: message + contact link */}
             <div className="flex-1 min-w-[200px] flex flex-col gap-5">
               <p
                 className="leading-relaxed opacity-55"
@@ -850,7 +884,6 @@ export default function Portfolio() {
               </div>
             </div>
 
-            {/* Right: info tiles */}
             <div className="flex flex-col gap-3 w-full sm:min-w-[200px] sm:w-auto">
               <div className="border border-white/10 p-4 sm:p-5">
                 <p className="text-[10px] uppercase tracking-widest opacity-35 mb-2">Location</p>
@@ -876,181 +909,151 @@ export default function Portfolio() {
       </FlowArt>
 
       {/* ══════════════════════════════════════
-          CERTIFICATE PREVIEW MODAL
+          CERTIFICATE PREVIEW MODAL  (unchanged)
       ══════════════════════════════════════ */}
       {previewCert && (
-  <div
-    className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-[4vw]"
-    style={{ background: 'rgba(0,0,0,0.92)', backdropFilter: 'blur(20px)' }}
-    onClick={() => setPreviewCert(null)}
-  >
-    <div
-      className="relative w-full sm:max-w-2xl flex flex-col"
-      style={{
-        background: '#0c1220',
-        border: '1px solid rgba(255,255,255,0.08)',
-        boxShadow: '0 32px 80px rgba(0,0,0,0.6)',
-        maxHeight: '95dvh',
-        overflowY: 'auto',
-      }}
-      onClick={e => e.stopPropagation()}
-    >
-      {/* ── Top accent line coloured by issuer ── */}
-      <div
-        className="h-[2px] w-full shrink-0"
-        style={{
-          background: (() => {
-            const map: Record<string, string> = {
-              'DeepLearning.AI': '#fb923c',
-              Google:            '#60a5fa',
-              Meta:              '#818cf8',
-              IBM:               '#34d399',
-              Udemy:             '#a78bfa',
-            };
-            return map[previewCert.issuer] ?? 'rgba(255,255,255,0.2)';
-          })(),
-        }}
-      />
-
-      {/* ── Modal header ── */}
-      <div className="flex items-start justify-between gap-6 px-7 py-5 border-b border-white/[0.07]">
-        <div className="flex flex-col gap-1.5">
-          {/* Issuer badge */}
-          <div className="flex items-center gap-2">
-            <span
-              className="text-[9px] font-bold uppercase tracking-[0.2em] px-2 py-0.5 border"
-              style={{
-                borderColor: 'rgba(255,255,255,0.1)',
-                background: 'rgba(255,255,255,0.04)',
-                color: 'rgba(255,255,255,0.45)',
-              }}
-            >
-              {previewCert.issuer}
-            </span>
-            <span className="text-[9px] uppercase tracking-widest opacity-25">
-              · {previewCert.date}
-            </span>
-          </div>
-          <h3 className="text-[15px] font-bold text-white leading-snug max-w-[36ch]">
-            {previewCert.title}
-          </h3>
-        </div>
-
-        <button
+        <div
+          className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center p-0 sm:p-[4vw]"
+          style={{ background: 'rgba(0,0,0,0.92)', backdropFilter: 'blur(20px)' }}
           onClick={() => setPreviewCert(null)}
-          aria-label="Close preview"
-          className="shrink-0 mt-0.5 w-8 h-8 border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-white/40 hover:bg-white/5 transition-all duration-150"
         >
-          <X size={13} />
-        </button>
-      </div>
-
-      {/* ── Certificate image ── */}
-      <div
-        className="relative w-full flex items-center justify-center overflow-hidden"
-        style={{ background: 'rgba(255,255,255,0.02)', minHeight: 320, maxHeight: 500 }}
-      >
-        {/* Subtle corner marks */}
-        {[
-          'top-3 left-3 border-t border-l',
-          'top-3 right-3 border-t border-r',
-          'bottom-3 left-3 border-b border-l',
-          'bottom-3 right-3 border-b border-r',
-        ].map(cls => (
-          <span
-            key={cls}
-            className={`absolute w-4 h-4 pointer-events-none ${cls}`}
-            style={{ borderColor: 'rgba(255,255,255,0.08)' }}
-          />
-        ))}
-
-        <img
-          src={previewCert.file}
-          alt={previewCert.title}
-          className="w-full h-full object-contain px-6 py-6"
-          style={{ maxHeight: 500 }}
-          onError={e => {
-            const el = e.currentTarget as HTMLImageElement;
-            el.style.display = 'none';
-            const parent = el.parentElement;
-            if (parent) {
-              parent.innerHTML = `
-                <div style="display:flex;flex-direction:column;align-items:center;gap:16px;padding:4rem;color:rgba(255,255,255,.2);text-align:center">
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="opacity:.4">
-                    <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z"/>
-                  </svg>
-                  <div>
-                    <p style="font-size:13px;font-weight:700;color:rgba(255,255,255,.35);margin-bottom:6px">Certificate not found</p>
-                    <p style="font-size:11px;line-height:1.7;color:rgba(255,255,255,.2)">
-                      Place the file at<br/>
-                      <code style="font-family:monospace;background:rgba(255,255,255,.06);padding:2px 6px;border-radius:3px;font-size:10px">
-                        public/certificates/
-                      </code>
-                    </p>
-                  </div>
-                </div>
-              `;
-            }
-          }}
-        />
-      </div>
-
-      {/* ── Footer action bar ── */}
-      <div
-        className="flex items-center justify-between gap-4 px-7 py-4 border-t border-white/[0.07]"
-        style={{ background: 'rgba(255,255,255,0.015)' }}
-      >
-        {/* Cert index indicator */}
-        <div className="flex items-center gap-3">
-          {certifications.map((c, i) => (
-            <button
-              key={c.id}
-              onClick={() => setPreviewCert(certifications[i])}
-              aria-label={`View ${c.title}`}
-              className="transition-all duration-200"
+          <div
+            className="relative w-full sm:max-w-2xl flex flex-col"
+            style={{
+              background: '#0c1220',
+              border: '1px solid rgba(255,255,255,0.08)',
+              boxShadow: '0 32px 80px rgba(0,0,0,0.6)',
+              maxHeight: '95dvh',
+              overflowY: 'auto',
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div
+              className="h-[2px] w-full shrink-0"
               style={{
-                width: previewCert.id === c.id ? 20 : 5,
-                height: 3,
-                borderRadius: 2,
-                background:
-                  previewCert.id === c.id
-                    ? 'rgba(255,255,255,0.7)'
-                    : 'rgba(255,255,255,0.15)',
+                background: (() => {
+                  const map: Record<string, string> = {
+                    'DeepLearning.AI': '#fb923c',
+                    Google:            '#60a5fa',
+                    Meta:              '#818cf8',
+                    IBM:               '#34d399',
+                    Udemy:             '#a78bfa',
+                  };
+                  return map[previewCert.issuer] ?? 'rgba(255,255,255,0.2)';
+                })(),
               }}
             />
-          ))}
-        </div>
 
-        {/* Prev / Next nav */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => {
-              const idx = certifications.findIndex(c => c.id === previewCert.id);
-              const prev = certifications[(idx - 1 + certifications.length) % certifications.length];
-              setPreviewCert(prev);
-            }}
-            className="w-8 h-8 border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-white/30 hover:bg-white/5 transition-all duration-150 text-xs font-bold"
-            aria-label="Previous certificate"
-          >
-            ←
-          </button>
-          <button
-            onClick={() => {
-              const idx = certifications.findIndex(c => c.id === previewCert.id);
-              const next = certifications[(idx + 1) % certifications.length];
-              setPreviewCert(next);
-            }}
-            className="w-8 h-8 border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-white/30 hover:bg-white/5 transition-all duration-150 text-xs font-bold"
-            aria-label="Next certificate"
-          >
-            →
-          </button>
-        </div>
-      </div>
+            <div className="flex items-start justify-between gap-6 px-7 py-5 border-b border-white/[0.07]">
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center gap-2">
+                  <span
+                    className="text-[9px] font-bold uppercase tracking-[0.2em] px-2 py-0.5 border"
+                    style={{ borderColor: 'rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.45)' }}
+                  >
+                    {previewCert.issuer}
+                  </span>
+                  <span className="text-[9px] uppercase tracking-widest opacity-25">· {previewCert.date}</span>
+                </div>
+                <h3 className="text-[15px] font-bold text-white leading-snug max-w-[36ch]">
+                  {previewCert.title}
+                </h3>
+              </div>
 
-    </div>
-  </div>
-)}
+              <button
+                onClick={() => setPreviewCert(null)}
+                aria-label="Close preview"
+                className="shrink-0 mt-0.5 w-8 h-8 border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-white/40 hover:bg-white/5 transition-all duration-150"
+              >
+                <X size={13} />
+              </button>
+            </div>
+
+            <div
+              className="relative w-full flex items-center justify-center overflow-hidden"
+              style={{ background: 'rgba(255,255,255,0.02)', minHeight: 320, maxHeight: 500 }}
+            >
+              {[
+                'top-3 left-3 border-t border-l',
+                'top-3 right-3 border-t border-r',
+                'bottom-3 left-3 border-b border-l',
+                'bottom-3 right-3 border-b border-r',
+              ].map(cls => (
+                <span key={cls} className={`absolute w-4 h-4 pointer-events-none ${cls}`} style={{ borderColor: 'rgba(255,255,255,0.08)' }} />
+              ))}
+              <img
+                src={previewCert.file}
+                alt={previewCert.title}
+                className="w-full h-full object-contain px-6 py-6"
+                style={{ maxHeight: 500 }}
+                onError={e => {
+                  const el = e.currentTarget as HTMLImageElement;
+                  el.style.display = 'none';
+                  const parent = el.parentElement;
+                  if (parent) {
+                    parent.innerHTML = `
+                      <div style="display:flex;flex-direction:column;align-items:center;gap:16px;padding:4rem;color:rgba(255,255,255,.2);text-align:center">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="opacity:.4">
+                          <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z"/>
+                        </svg>
+                        <div>
+                          <p style="font-size:13px;font-weight:700;color:rgba(255,255,255,.35);margin-bottom:6px">Certificate not found</p>
+                          <p style="font-size:11px;line-height:1.7;color:rgba(255,255,255,.2)">
+                            Place the file at<br/>
+                            <code style="font-family:monospace;background:rgba(255,255,255,.06);padding:2px 6px;border-radius:3px;font-size:10px">
+                              public/certificates/
+                            </code>
+                          </p>
+                        </div>
+                      </div>
+                    `;
+                  }
+                }}
+              />
+            </div>
+
+            <div
+              className="flex items-center justify-between gap-4 px-7 py-4 border-t border-white/[0.07]"
+              style={{ background: 'rgba(255,255,255,0.015)' }}
+            >
+              <div className="flex items-center gap-3">
+                {certifications.map((c, i) => (
+                  <button
+                    key={c.id}
+                    onClick={() => setPreviewCert(certifications[i])}
+                    aria-label={`View ${c.title}`}
+                    className="transition-all duration-200"
+                    style={{
+                      width: previewCert.id === c.id ? 20 : 5,
+                      height: 3,
+                      borderRadius: 2,
+                      background: previewCert.id === c.id ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.15)',
+                    }}
+                  />
+                ))}
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    const idx = certifications.findIndex(c => c.id === previewCert.id);
+                    setPreviewCert(certifications[(idx - 1 + certifications.length) % certifications.length]);
+                  }}
+                  className="w-8 h-8 border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-white/30 hover:bg-white/5 transition-all duration-150 text-xs font-bold"
+                  aria-label="Previous certificate"
+                >←</button>
+                <button
+                  onClick={() => {
+                    const idx = certifications.findIndex(c => c.id === previewCert.id);
+                    setPreviewCert(certifications[(idx + 1) % certifications.length]);
+                  }}
+                  className="w-8 h-8 border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-white/30 hover:bg-white/5 transition-all duration-150 text-xs font-bold"
+                  aria-label="Next certificate"
+                >→</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
