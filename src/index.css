@@ -1,0 +1,17 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant xs (@media (width >= 400px));
+
+:root {
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Responsive base overrides */
+* {
+  box-sizing: border-box;
+}
+
+img {
+  max-width: 100%;
+}
