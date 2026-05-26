@@ -38,7 +38,7 @@ const projects = [
       'A fast, recruiter-focused portfolio that turns identity, proof, and potential into a scannable story.',
     tech: ['React', 'Vite', 'Tailwind', 'Framer Motion', 'GSAP'],
     github: 'https://github.com/ronitmexson2924/ronit-mexson',
-    live: 'https://ronit-mexson.netlify.app',
+    live: 'https://ronitmexson.netlify.app',
     accent: '#FD5201',
   },
   {
