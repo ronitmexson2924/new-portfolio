@@ -125,17 +125,17 @@ interface Cert {
 }
 
 const certifications: Cert[] = [
-  { id: 4, title: 'AI For Everyone', issuer: 'DeepLearning.AI', date: '2025', icon: BrainCircuit, file: "../../public/certificates/ai-for-everyone.png" },
-  { id: 5, title: 'Intro to Git and GitHub', issuer: 'Google', date: '2024', icon: Code2, file: '../../public/certificates/intro-to-git-and-github.png' },
-  { id: 6, title: 'Using Python to Interact with the Operating System', issuer: 'Google', date: '2024', icon: Code2, file: '../../public/certificates/python-to-interact-with-os.png' },
-  { id: 7, title: 'Intro to Front-End Development', issuer: 'Meta', date: '2024', icon: Monitor, file: '../../public/certificates/intro-to-front-end.png' },
-  { id: 8, title: 'Databases and SQL for Data Science with Python', issuer: 'IBM', date: '2024', icon: Code2, file: '../../public/certificates/databases-sql.png' },
-  { id: 9, title: 'Generative AI: Prompt Engineering Basics', issuer: 'IBM', date: '2025', icon: BrainCircuit, file: '../../public/certificates/prompt-eng-basics.png' },
-  { id: 10, title: 'Generative AI: Introduction and Applications', issuer: 'IBM', date: '2025', icon: BrainCircuit, file: '../../public/certificates/gen-ai-basics.png' },
-  { id: 11, title: 'Introduction to Artificial Intelligence(AI)', issuer: 'IBM', date: '2025', icon: BrainCircuit, file: '../../public/certificates/intro-to-gen-ai.png' },
-  { id: 12, title: 'Deep Learning & Neural Networks', issuer: 'IBM', date: '2025', icon: BrainCircuit, file: '../../public/certificates/dl-basics.png' },
-  { id: 13, title: 'Machine Learning in Python', issuer: 'IBM', date: '2025', icon: BrainCircuit, file: '../../public/certificates/ml-basics.png' },
-  { id: 14, title: 'C Programming Bootcamp', issuer: 'Udemy', date: '2025', icon: Code2, file: '../../public/certificates/c-programming.png' },
+  { id: 4,  title: 'AI For Everyone',                                    issuer: 'DeepLearning.AI', date: '2025', icon: BrainCircuit, file: '/certificates/ai-for-everyone.png'        },
+  { id: 5,  title: 'Intro to Git and GitHub',                            issuer: 'Google',          date: '2024', icon: Code2,        file: '/certificates/intro-to-git-and-github.png' },
+  { id: 6,  title: 'Using Python to Interact with the Operating System', issuer: 'Google',          date: '2024', icon: Code2,        file: '/certificates/python-to-interact-with-os.png' },
+  { id: 7,  title: 'Intro to Front-End Development',                     issuer: 'Meta',            date: '2024', icon: Monitor,      file: '/certificates/intro-to-front-end.png'      },
+  { id: 8,  title: 'Databases and SQL for Data Science with Python',     issuer: 'IBM',             date: '2024', icon: Code2,        file: '/certificates/databases-sql.png'           },
+  { id: 9,  title: 'Generative AI: Prompt Engineering Basics',           issuer: 'IBM',             date: '2025', icon: BrainCircuit, file: '/certificates/prompt-eng-basics.png'       },
+  { id: 10, title: 'Generative AI: Introduction and Applications',       issuer: 'IBM',             date: '2025', icon: BrainCircuit, file: '/certificates/gen-ai-basics.png'           },
+  { id: 11, title: 'Introduction to Artificial Intelligence(AI)',         issuer: 'IBM',             date: '2025', icon: BrainCircuit, file: '/certificates/intro-to-gen-ai.png'         },
+  { id: 12, title: 'Deep Learning & Neural Networks',                    issuer: 'IBM',             date: '2025', icon: BrainCircuit, file: '/certificates/dl-basics.png'               },
+  { id: 13, title: 'Machine Learning in Python',                         issuer: 'IBM',             date: '2025', icon: BrainCircuit, file: '/certificates/ml-basics.png'               },
+  { id: 14, title: 'C Programming Bootcamp',                             issuer: 'Udemy',           date: '2025', icon: Code2,        file: '/certificates/c-programming.png'            },
 ];
 
 const socials = [
@@ -381,11 +381,11 @@ export default function Portfolio() {
           </div>
 
           {/* Active project detail */}
-          <div
+          {/* <div
             key={proj.id}
             className="flex flex-col gap-5"
             style={{ animation: 'projectEnter 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) both' }}
-          >
+          > */}
             <div>
               <div className="flex items-center gap-2.5 mb-3">
                 <span
@@ -422,7 +422,115 @@ export default function Portfolio() {
                 </span>
               ))}
             </div>
-          </div>
+
+            {/* ── Mini browser preview window ─────────────────────────── */}
+            <div
+              style={{
+                borderRadius:  10,
+                overflow:      'hidden',
+                border:        `1px solid rgba(255,255,255,0.14)`,
+                boxShadow:     '0 16px 48px rgba(0,0,0,0.5)',
+                background:    '#111',
+                willChange:    'transform',
+              }}
+            >
+              {/* Browser chrome bar */}
+              <div
+                style={{
+                  display:        'flex',
+                  alignItems:     'center',
+                  gap:            8,
+                  padding:        '8px 12px',
+                  borderBottom:   '1px solid rgba(255,255,255,0.09)',
+                  background:     'rgba(255,255,255,0.05)',
+                }}
+              >
+                {/* Traffic-light dots */}
+                {['rgba(255,95,86,0.75)', 'rgba(255,189,68,0.75)', 'rgba(40,200,100,0.75)'].map((bg) => (
+                  <span key={bg} style={{ width: 10, height: 10, borderRadius: '50%', background: bg, display: 'block', flexShrink: 0 }} />
+                ))}
+                {/* Address bar */}
+                <div
+                  style={{
+                    flex:          1,
+                    margin:        '0 8px',
+                    display:       'flex',
+                    alignItems:    'center',
+                    gap:           6,
+                    background:    'rgba(255,255,255,0.07)',
+                    border:        '1px solid rgba(255,255,255,0.1)',
+                    borderRadius:  6,
+                    padding:       '4px 10px',
+                    overflow:      'hidden',
+                  }}
+                >
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                  </svg>
+                  <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
+                    {proj.live === '#' ? 'No live demo available' : proj.live.replace(/^https?:\/\//, '')}
+                  </span>
+                </div>
+                {/* Open-in-new-tab button */}
+                {proj.live !== '#' && (
+                  <a
+                    href={proj.live}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Open in new tab"
+                    style={{ color: 'rgba(255,255,255,0.35)', flexShrink: 0, display: 'flex', alignItems: 'center' }}
+                    className="hover:text-white transition-colors"
+                  >
+                    <ExternalLink size={12} />
+                  </a>
+                )}
+              </div>
+
+              {/* Preview viewport */}
+              {proj.live !== '#' ? (
+                <div style={{ position: 'relative', width: '100%', height: 210, overflow: 'hidden', background: '#0d0d0d' }}>
+                  {/* Scaled-down iframe — 2× wide + 2× tall, scaled 50% → fills the container */}
+                  <iframe
+                    key={proj.id}           /* remount when project changes */
+                    src={proj.live}
+                    title={`Preview — ${proj.title}`}
+                    loading="lazy"
+                    style={{
+                      width:           '200%',
+                      height:          '420px',
+                      border:          'none',
+                      transform:        'scale(0.5)',
+                      transformOrigin: 'top left',
+                      pointerEvents:   'none',  /* don't intercept clicks */
+                    }}
+                  />
+                  {/* Gradient fade at bottom to blend into chrome */}
+                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 48, background: 'linear-gradient(to top, #111, transparent)', pointerEvents: 'none' }} />
+                  {/* Subtle accent tint overlay matching project accent */}
+                  <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(135deg, ${proj.accent}10 0%, transparent 60%)`, pointerEvents: 'none' }} />
+                </div>
+              ) : (
+                <div
+                  style={{
+                    height:         160,
+                    display:        'flex',
+                    flexDirection:  'column',
+                    alignItems:     'center',
+                    justifyContent: 'center',
+                    gap:            10,
+                    color:          'rgba(255,255,255,0.18)',
+                    background:     'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.015) 10px, rgba(255,255,255,0.015) 20px)',
+                  }}
+                >
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5 }}>
+                    <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+                  </svg>
+                  <span style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.18em', fontWeight: 700 }}>
+                    No live demo available
+                  </span>
+                </div>
+              )}
+            </div>
 
           <hr className="border-0 border-t border-white/10" />
 
@@ -500,11 +608,11 @@ export default function Portfolio() {
 
           <hr className="border-0 border-t" style={{ borderColor: 'rgba(0,0,0,0.08)' }} />
 
-          {/* 5-col panel grid — 2 cols mobile, 3 cols tablet, 5 cols desktop */}
+          {/* Vertical skill rows — one full-width band per category, no orphan gap */}
           <div
             ref={skillsGridRef}
-            className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5${skillsVisible ? ' skills-revealed' : ''}`}
-            style={{ gap: '1px', background: 'rgba(0,0,0,0.06)', borderRadius: '12px', overflow: 'hidden' }}
+            className={`flex flex-col gap-[1px]${skillsVisible ? ' skills-revealed' : ''}`}
+            style={{ background: 'rgba(0,0,0,0.06)', borderRadius: '12px', overflow: 'hidden' }}
           >
             {skillCategories.map((cat, ci) => {
               const accents = [
@@ -525,59 +633,65 @@ export default function Portfolio() {
               return (
                 <div
                   key={cat.label}
-                  className="skill-col flex flex-col gap-4 p-4 sm:p-5 cursor-default"
+                  className="skill-col flex flex-col sm:flex-row sm:items-start gap-4 p-4 sm:p-5 cursor-default"
                   style={{
                     background: '#F5F0E6',
-                    '--col-accent': color,
+                    '--col-accent':      color,
                     '--col-accent-soft': soft,
-                    '--col-hover-bg': hover,
+                    '--col-hover-bg':    hover,
                   } as React.CSSProperties}
                 >
-                  {/* Category header */}
-                  <div className="flex items-center gap-2">
+                  {/* Category label — fixed-width column on sm+ */}
+                  <div className="flex items-center gap-2 sm:w-36 shrink-0 sm:pt-1">
                     <span
                       className="skill-dot w-2 h-2 rounded-full shrink-0"
                       style={{ background: color }}
                     />
                     <span
                       className="skill-cat-label text-[10px] font-bold uppercase tracking-[0.18em] transition-colors duration-300"
-                      style={{ color: 'rgba(0,0,0,0.35)' }}
+                      style={{ color: 'rgba(0,0,0,0.4)' }}
                     >
-                      {cat.label}
+                      {cat.emoji}&nbsp; {cat.label}
                     </span>
                   </div>
 
-                  <hr className="border-0 border-t" style={{ borderColor: 'rgba(0,0,0,0.07)' }} />
+                  {/* Vertical divider on desktop */}
+                  <div
+                    className="hidden sm:block w-px self-stretch shrink-0"
+                    style={{ background: 'rgba(0,0,0,0.07)' }}
+                  />
 
-                  {/* Skill rows */}
-                  <div className="flex flex-col gap-0.5">
+                  {/* Skill pills — wrap freely, no orphan */}
+                  <div className="flex flex-wrap gap-2">
                     {cat.items.map((skill, si) => {
                       const pct = proficiency[skill] ?? 70;
                       return (
                         <div
                           key={skill}
-                          className="skill-row flex items-center justify-between gap-3 py-2 px-1"
+                          className="skill-row flex flex-col gap-1.5 px-3 py-2"
+                          style={{
+                            background:   'rgba(0,0,0,0.04)',
+                            borderRadius:  8,
+                            minWidth:      76,
+                          }}
                         >
                           <span
-                            className="skill-name text-[12px] sm:text-[12.5px] font-medium transition-all duration-200 leading-none"
-                            style={{ color: 'rgba(0,0,0,0.55)', wordBreak: 'break-word' }}
+                            className="skill-name text-[11.5px] font-semibold leading-none transition-all duration-200"
+                            style={{ color: 'rgba(0,0,0,0.58)' }}
                           >
                             {skill}
                           </span>
-                          {/* Animated proficiency bar */}
                           <div
-                            className="w-10 h-[3px] rounded-full shrink-0"
+                            className="h-[2.5px] rounded-full"
                             style={{ background: 'rgba(0,0,0,0.08)' }}
                           >
                             <div
                               className="skill-bar-fill h-full rounded-full"
                               style={{
-                                '--bar-w': `${pct}%`,
-                                background: color,
-                                // Diagonal stagger: column delay + per-skill delay
-                                transitionDelay: skillsVisible
-                                  ? `${ci * 0.1 + si * 0.05}s`
-                                  : '0s',
+                                '--bar-w':       `${pct}%`,
+                                background:       color,
+                                transitionDelay:  skillsVisible ? `${ci * 0.08 + si * 0.04}s` : '0s',
+                                willChange:       'width',
                               } as React.CSSProperties}
                             />
                           </div>
@@ -634,7 +748,7 @@ export default function Portfolio() {
             className="font-bold leading-[0.88] uppercase tracking-tight"
             style={{ fontSize: 'clamp(2rem, 7vw, 6rem)' }}
           >
-            {certifications.length} Certs<br />&amp; Counting
+            {certifications.length} Certifications<br />&amp; Counting
           </h2>
 
           <hr className="border-0 border-t border-white/20" />
@@ -650,14 +764,14 @@ export default function Portfolio() {
                   style={{ background: 'rgba(255,255,255,0.06)' }}
                 >
                   <div className="flex items-center justify-between gap-1">
-                    <Icon size={13} className="text-white/60 shrink-0" />
-                    <span className="text-[9px] uppercase tracking-wider text-white/50 font-bold">
+                    <Icon size={14} className="text-white/60 shrink-0" />
+                    <span className="text-[10px] uppercase tracking-wider text-white/60 font-bold">
                       {cert.issuer}
                     </span>
                   </div>
 
                   <p
-                    className="text-[11px] font-bold leading-tight text-white"
+                    className="text-[13px] font-bold leading-snug text-white"
                     style={{
                       display: '-webkit-box',
                       WebkitLineClamp: 2,
@@ -669,12 +783,12 @@ export default function Portfolio() {
                   </p>
 
                   <div className="flex items-center justify-between mt-auto pt-1">
-                    <span className="text-[9px] text-white/40">{cert.date}</span>
+                    <span className="text-[11px] text-white/50 font-semibold">{cert.date}</span>
                     <button
                       onClick={() => setPreviewCert(cert)}
-                      className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider text-white opacity-0 group-hover:opacity-60 hover:!opacity-100 transition-opacity"
+                      className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-white/70 hover:text-white transition-colors"
                     >
-                      <Eye size={9} /> Preview
+                      <Eye size={11} /> Preview
                     </button>
                   </div>
                 </div>
