@@ -85,33 +85,6 @@ const projects = [
   },
 ];
 
-const skillCategories = [
-  {
-    emoji: '🗣️',
-    label: 'Languages',
-    items: ['JavaScript', 'TypeScript', 'Python', 'Java', 'C', 'C++'],
-  },
-  {
-    emoji: '🎨',
-    label: 'Frontend',
-    items: ['React', 'HTML5', 'CSS3', 'Tailwind CSS', 'Bootstrap'],
-  },
-  {
-    emoji: '⚙️',
-    label: 'Backend',
-    items: ['Node.js', 'Express.js', 'MongoDB', 'PostgreSQL', 'MySQL'],
-  },
-  {
-    emoji: '🤖',
-    label: 'AI / ML',
-    items: ['TensorFlow', 'PyTorch', 'Scikit-learn', 'Keras'],
-  },
-  {
-    emoji: '☁️',
-    label: 'DevOps & Cloud',
-    items: ['Docker', 'Kubernetes', 'AWS', 'GCP', 'Linux', 'Git', 'GitHub'],
-  },
-];
 
 interface Cert {
   id: number;
@@ -574,198 +547,210 @@ export default function Portfolio() {
         </FlowSection>
 
         {/* ══════════════════════════════════════
-            03 — SKILLS
-            Mobile:         single column (unchanged)
-            Tablet / laptop: 2-column grid with larger pills and padding;
-                             DevOps & Cloud spans both columns since it's the
-                             longest category and prevents an awkward half-row.
+            03 — SKILLS  (5-column vertical layout)
         ══════════════════════════════════════ */}
         <FlowSection
           aria-label="Skills"
           style={{ backgroundColor: '#F5F0E6', color: '#1a1a1a' }}
         >
           <style>{`
-            .skill-col { transition: background 0.3s ease; }
-            .skill-col:hover { background: var(--col-hover-bg) !important; }
-            .skill-col:hover .skill-cat-label { color: var(--col-accent) !important; opacity: 1; }
-            .skill-col:hover .skill-dot { transform: scale(1.4); }
-            .skill-row { transition: background 0.18s ease, padding-left 0.18s ease; border-radius: 6px; }
-            .skill-row:hover { background: var(--col-accent-soft); padding-left: 8px; }
-            .skill-row:hover .skill-name { color: var(--col-accent) !important; font-weight: 700; }
-            .skill-bar-fill {
-              transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+            /* Bar animation: starts at 0, triggers when .skills-revealed is added to the grid */
+            .sk-bar-fill {
               width: 0 !important;
+              transition: width 0.75s cubic-bezier(0.22, 1, 0.36, 1);
             }
-            .skill-col:hover .skill-bar-fill { width: var(--bar-w) !important; }
-            .skills-revealed .skill-bar-fill { width: var(--bar-w) !important; }
-            .skill-dot { transition: transform 0.3s ease; }
+            .skills-revealed .sk-bar-fill { width: var(--bw) !important; }
+            /* Subtle row hover */
+            .sk-row:hover .sk-name { opacity: 1; }
+            .sk-row:hover .sk-bar-fill { opacity: 0.85; }
           `}</style>
 
-          <p className="text-xs font-bold uppercase tracking-[0.2em]" style={{ color: 'rgba(0,0,0,0.4)' }}>
-            03 — Skills
-          </p>
-
-          <hr className="border-0 border-t" style={{ borderColor: 'rgba(0,0,0,0.08)' }} />
-
-          <div className="flex items-end justify-between gap-8 flex-wrap">
-            <h2
-              className="font-bold leading-[0.88] uppercase tracking-tight"
-              style={{ fontSize: 'clamp(2.5rem, 7vw, 8rem)', color: '#1a1a1a' }}
-            >
-              What I<br />Know
-            </h2>
-            <div className="flex flex-col items-end gap-2 pb-1">
-              <span
-                className="font-black leading-none select-none"
-                style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)', color: 'rgba(0,0,0,0.06)', letterSpacing: '-0.04em' }}
-              >
-                30+
-              </span>
-              <p className="text-xs uppercase tracking-[0.12em] max-w-[200px] leading-relaxed text-right" style={{ color: 'rgba(0,0,0,0.35)' }}>
-                Tools &amp; technologies across the full stack
+          {/* ── HEADER ROW ───────────────────────────────────────────── */}
+          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 24, flexWrap: 'wrap', paddingBottom: 16, borderBottom: '0.5px solid rgba(0,0,0,0.12)' }}>
+            {/* Left */}
+            <div>
+              <p style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.18em', color: 'rgba(0,0,0,0.38)', marginBottom: 6 }}>
+                03 — SKILLS
+              </p>
+              <h2 style={{ fontSize: 'clamp(2.5rem, 7vw, 8rem)', fontWeight: 500, letterSpacing: '-0.03em', lineHeight: 0.88, textTransform: 'uppercase', margin: 0 }}>
+                WHAT I <span style={{ opacity: 0.25 }}>KNOW</span>
+              </h2>
+            </div>
+            {/* Right */}
+            <div style={{ textAlign: 'right' }}>
+              <p style={{ fontSize: 26, fontWeight: 500, lineHeight: 1, letterSpacing: '-0.02em', margin: '0 0 4px' }}>30+</p>
+              <p style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.14em', color: 'rgba(0,0,0,0.38)', margin: 0 }}>
+                TOOLS &amp; TECHNOLOGIES
               </p>
             </div>
           </div>
 
-          <hr className="border-0 border-t" style={{ borderColor: 'rgba(0,0,0,0.08)' }} />
+          {/* ── 5-COLUMN GRID ────────────────────────────────────────── */}
+          {(() => {
+            const cols = [
+              {
+                key: 'Languages',
+                dot: '#7F77DD',
+                fill: '#7F77DD',
+                skills: [
+                  { name: 'JavaScript',  label: 'Expert',       pct: 95 },
+                  { name: 'TypeScript',  label: 'Expert',       pct: 90 },
+                  { name: 'Python',      label: 'Advanced',     pct: 85 },
+                  { name: 'Java',        label: 'Advanced',     pct: 75 },
+                  { name: 'C',           label: 'Intermediate', pct: 65 },
+                  { name: 'C++',         label: 'Intermediate', pct: 60 },
+                ],
+              },
+              {
+                key: 'Frontend',
+                dot: '#D85A30',
+                fill: '#D85A30',
+                skills: [
+                  { name: 'React',        label: 'Expert',   pct: 95 },
+                  { name: 'HTML5',        label: 'Expert',   pct: 95 },
+                  { name: 'CSS3',         label: 'Expert',   pct: 90 },
+                  { name: 'Tailwind CSS', label: 'Advanced', pct: 85 },
+                  { name: 'Bootstrap',    label: 'Advanced', pct: 80 },
+                ],
+              },
+              {
+                key: 'Backend',
+                dot: '#1D9E75',
+                fill: '#1D9E75',
+                skills: [
+                  { name: 'Node.js',     label: 'Expert',       pct: 90 },
+                  { name: 'Express.js',  label: 'Expert',       pct: 90 },
+                  { name: 'MongoDB',     label: 'Advanced',     pct: 80 },
+                  { name: 'PostgreSQL',  label: 'Advanced',     pct: 78 },
+                  { name: 'MySQL',       label: 'Intermediate', pct: 70 },
+                ],
+              },
+              {
+                key: 'AI / ML',
+                dot: '#378ADD',
+                fill: '#378ADD',
+                skills: [
+                  { name: 'TensorFlow',   label: 'Advanced',     pct: 80 },
+                  { name: 'PyTorch',      label: 'Advanced',     pct: 78 },
+                  { name: 'Scikit-learn', label: 'Advanced',     pct: 82 },
+                  { name: 'Keras',        label: 'Intermediate', pct: 65 },
+                ],
+              },
+              {
+                key: 'DevOps',
+                dot: '#E85D24',
+                fill: '#E85D24',
+                skills: [
+                  { name: 'Docker',     label: 'Beginner', pct: 9  },
+                  { name: 'Kubernetes', label: 'Beginner', pct: 8  },
+                  { name: 'AWS',        label: 'Beginner', pct: 10 },
+                  { name: 'GCP',        label: 'Beginner', pct: 10 },
+                  { name: 'Linux',      label: 'Advanced', pct: 85 },
+                  { name: 'Git',        label: 'Expert',   pct: 95 },
+                  { name: 'GitHub',     label: 'Expert',   pct: 95 },
+                ],
+              },
+            ];
 
-          {/*
-            ── Skill grid ───────────────────────────────────────────────────
-            Mobile:          1 column (flex-col, as before)
-            lg (laptop+):    2 columns — 4 categories pair up, DevOps spans
-                             both columns so the grid ends cleanly.
-            The 1px gaps between cells are created via a background color on
-            the grid container that shows through between the white cells.
-          */}
-          <div
-            ref={skillsGridRef}
-            className={`grid grid-cols-1 lg:grid-cols-2 gap-[1px]${skillsVisible ? ' skills-revealed' : ''}`}
-            style={{ background: 'rgba(0,0,0,0.06)', borderRadius: '12px', overflow: 'hidden' }}
-          >
-            {skillCategories.map((cat, ci) => {
-              const accents = [
-                { color: '#7c3aed', soft: 'rgba(124,58,237,0.08)', hover: 'rgba(124,58,237,0.05)' },
-                { color: '#ea580c', soft: 'rgba(234,88,12,0.08)',  hover: 'rgba(234,88,12,0.05)'  },
-                { color: '#059669', soft: 'rgba(5,150,105,0.08)',   hover: 'rgba(5,150,105,0.05)'  },
-                { color: '#2563eb', soft: 'rgba(37,99,235,0.08)',   hover: 'rgba(37,99,235,0.05)'  },
-                { color: '#db2777', soft: 'rgba(219,39,119,0.08)',  hover: 'rgba(219,39,119,0.05)' },
-              ];
-              const proficiency: Record<string, number> = {
-                JavaScript: 90, TypeScript: 40, Python: 95, Java: 70, C: 89, 'C++': 92,
-                React: 70, HTML5: 100, CSS3: 98, 'Tailwind CSS': 92, Bootstrap: 90,
-                'Node.js': 62, 'Express.js': 58, MongoDB: 75, PostgreSQL: 50, MySQL: 75,
-                TensorFlow: 80, PyTorch: 72, 'Scikit-learn': 75, Keras: 78,
-                Docker: 5, Kubernetes: 10, AWS: 20, GCP: 5, Linux: 90, Git: 95, GitHub: 92,
-              };
-              const { color, soft, hover } = accents[ci];
-
-              // DevOps & Cloud (last item) spans both columns on lg so the
-              // grid ends with a full-width row rather than a half-empty one.
-              const isLast = ci === skillCategories.length - 1;
-
-              return (
-                <div
-                  key={cat.label}
-                  className={[
-                    'skill-col flex flex-col sm:flex-row sm:items-start',
-                    // Mobile/tablet inner padding unchanged; lg gets extra breathing room
-                    'gap-4 p-4 sm:p-5 lg:p-7',
-                    'cursor-default',
-                    isLast ? 'lg:col-span-2' : '',
-                  ].join(' ')}
-                  style={{
-                    background: '#F5F0E6',
-                    '--col-accent':      color,
-                    '--col-accent-soft': soft,
-                    '--col-hover-bg':    hover,
-                  } as React.CSSProperties}
-                >
-                  {/* Category label — fixed-width column on sm+ */}
-                  <div className="flex items-center gap-2 sm:w-36 lg:w-44 shrink-0 sm:pt-1">
-                    <span
-                      className="skill-dot w-2 h-2 rounded-full shrink-0"
-                      style={{ background: color }}
-                    />
-                    <span
-                      className="skill-cat-label text-[10px] lg:text-[11px] font-bold uppercase tracking-[0.18em] transition-colors duration-300"
-                      style={{ color: 'rgba(0,0,0,0.4)' }}
-                    >
-                      {cat.emoji}&nbsp; {cat.label}
-                    </span>
-                  </div>
-
-                  {/* Vertical divider on desktop */}
+            return (
+              <div
+                ref={skillsGridRef}
+                className={skillsVisible ? 'skills-revealed' : ''}
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(5, 1fr)',
+                  gap: 1,
+                  background: 'rgba(0,0,0,0.10)',
+                  borderRadius: 0,
+                  overflow: 'hidden',
+                  margin: '0 -32px',
+                }}
+              >
+                {cols.map((col, ci) => (
                   <div
-                    className="hidden sm:block w-px self-stretch shrink-0"
-                    style={{ background: 'rgba(0,0,0,0.07)' }}
-                  />
+                    key={col.key}
+                    style={{
+                      background: '#F5F0E6',
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}
+                  >
+                    {/* Column header */}
+                    <div style={{ padding: '14px 16px 12px', borderBottom: '0.5px solid rgba(0,0,0,0.10)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 5 }}>
+                        <span style={{ width: 7, height: 7, borderRadius: '50%', background: col.dot, flexShrink: 0, display: 'inline-block' }} />
+                        <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(0,0,0,0.7)' }}>
+                          {col.key}
+                        </span>
+                      </div>
+                      <p style={{ fontSize: 10, color: 'rgba(0,0,0,0.35)', margin: 0, paddingLeft: 14 }}>
+                        {col.skills.length} skills
+                      </p>
+                    </div>
 
-                  {/* Skill pills */}
-                  <div className="flex flex-wrap gap-2 lg:gap-2.5">
-                    {cat.items.map((skill, si) => {
-                      const pct = proficiency[skill] ?? 70;
-                      return (
+                    {/* Skill rows */}
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      {col.skills.map((skill, si) => (
                         <div
-                          key={skill}
-                          className="skill-row flex flex-col gap-1.5 px-3 py-2 lg:px-4 lg:py-2.5"
+                          key={skill.name}
+                          className="sk-row"
                           style={{
-                            background:   'rgba(0,0,0,0.04)',
-                            borderRadius:  8,
-                            minWidth:      76,
+                            padding: '10px 16px 10px',
+                            borderBottom: si < col.skills.length - 1 ? '0.5px solid rgba(0,0,0,0.07)' : 'none',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 6,
                           }}
                         >
-                          <span
-                            className="skill-name text-[11.5px] lg:text-[13px] font-semibold leading-none transition-all duration-200"
-                            style={{ color: 'rgba(0,0,0,0.58)' }}
-                          >
-                            {skill}
-                          </span>
-                          <div
-                            className="h-[2.5px] lg:h-[3px] rounded-full"
-                            style={{ background: 'rgba(0,0,0,0.08)' }}
-                          >
+                          {/* Name + proficiency label */}
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 4 }}>
+                            <span
+                              className="sk-name"
+                              style={{ fontSize: 12, color: 'rgba(0,0,0,0.72)', fontWeight: 500, opacity: 0.85, transition: 'opacity 0.15s' }}
+                            >
+                              {skill.name}
+                            </span>
+                            <span style={{ fontSize: 10, color: 'rgba(0,0,0,0.35)', flexShrink: 0, textAlign: 'right' }}>
+                              {skill.label}
+                            </span>
+                          </div>
+                          {/* Progress bar */}
+                          <div style={{ height: 5, borderRadius: 99, background: 'rgba(0,0,0,0.18)', overflow: 'hidden' }}>
                             <div
-                              className="skill-bar-fill h-full rounded-full"
+                              className="sk-bar-fill"
                               style={{
-                                '--bar-w':       `${pct}%`,
-                                background:       color,
-                                transitionDelay:  skillsVisible ? `${ci * 0.08 + si * 0.04}s` : '0s',
-                                willChange:       'width',
+                                height: '100%',
+                                borderRadius: 99,
+                                background: col.fill,
+                                '--bw': `${skill.pct}%`,
+                                transitionDelay: skillsVisible ? `${ci * 0.06 + si * 0.05}s` : '0s',
+                                willChange: 'width',
                               } as React.CSSProperties}
                             />
                           </div>
                         </div>
-                      );
-                    })}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                ))}
+              </div>
+            );
+          })()}
 
-          {/* Bottom row */}
-          <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:justify-between sm:flex-wrap pt-2">
-            <div className="flex items-center gap-4">
-              <span
-                className="font-black leading-none select-none"
-                style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)', color: 'rgba(0,0,0,0.12)', letterSpacing: '-0.04em' }}
-              >
-                30+
-              </span>
-              <span className="text-[11px] uppercase tracking-[0.14em]" style={{ color: 'rgba(0,0,0,0.3)' }}>
-                Skills &amp; counting
-              </span>
-            </div>
-            <div
-              className="flex items-center gap-2 px-4 py-2.5 text-[11px] font-bold uppercase tracking-[0.14em]"
-              style={{
-                border: '1px solid rgba(0,0,0,0.1)',
-                background: 'rgba(0,0,0,0.03)',
-                borderRadius: '99px',
-                color: 'rgba(0,0,0,0.5)',
-              }}
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+          {/* ── FOOTER ROW ───────────────────────────────────────────── */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', paddingTop: 16, borderTop: '0.5px solid rgba(0,0,0,0.12)' }}>
+            <span style={{ fontSize: 12, color: 'rgba(0,0,0,0.38)' }}>30+ skills &amp; counting</span>
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 7,
+              fontSize: 12,
+              padding: '6px 14px',
+              border: '0.5px solid rgba(0,0,0,0.18)',
+              borderRadius: 9999,
+              color: 'rgba(0,0,0,0.65)',
+            }}>
+              <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#22c55e', display: 'inline-block', flexShrink: 0, animation: 'pulse 2s cubic-bezier(0.4,0,0.6,1) infinite' }} />
               Open to new projects
             </div>
           </div>
