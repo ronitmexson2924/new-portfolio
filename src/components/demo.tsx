@@ -77,10 +77,10 @@ const projects = [
     shortTitle: 'Piano',
     title: 'Virtual Piano',
     description:
-      'A fun tool to play with, made in First Sem as a project. A fully interactive virtual piano built with Python.',
-    tech: ['Python'],
+      'A beautiful, interactive virtual piano. Play musical notes with your mouse, keyboard, or touch device.',
+    tech: ['React', 'Vite', 'Web Audio API', 'GSAP'],
     github: 'https://github.com/ronitmexson2924/Music-Box',
-    live: '#',
+    live: 'https://music-box-virtual-piano.netlify.app',
     accent: '#f472b6',
   },
 ];
@@ -433,19 +433,20 @@ export default function Portfolio() {
           aria-label="Projects"
           style={{ backgroundColor: '#000', color: '#fff' }}
         >
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-white">02 — Projects</p>
+          <div className="flex flex-col justify-between h-full flex-1 w-full gap-8 py-[2vh] sm:py-[4vh]">
+            <p className="text-base sm:text-xl lg:text-2xl font-bold uppercase tracking-[0.2em] text-white">02 — Projects</p>
 
-          <hr className="border-0 border-t border-white/10" />
+            <hr className="border-0 border-t border-white/10" />
 
-          {/* Tab bar */}
-          <div className="flex border-b border-white/10 overflow-x-auto">
+            {/* Tab bar */}
+            <div className="flex border-b border-white/10 overflow-x-auto">
             {projects.map((p, i) => (
               <button
                 key={p.id}
                 onClick={() => setActiveProject(i)}
                 style={activeProject === i ? { borderBottomColor: p.accent } : {}}
                 className={[
-                  'px-[2.5vw] py-3 text-xs font-bold uppercase tracking-widest whitespace-nowrap',
+                  'px-[2.5vw] py-4 text-base sm:text-xl lg:text-2xl font-bold uppercase tracking-widest whitespace-nowrap',
                   'border-b-2 -mb-px transition-all duration-200',
                   activeProject === i
                     ? 'text-white'
@@ -470,13 +471,13 @@ export default function Portfolio() {
                     className="w-2.5 h-2.5 shrink-0"
                     style={{ backgroundColor: proj.accent }}
                   />
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-white/50">
+                  <p className="text-sm sm:text-base lg:text-xl font-bold uppercase tracking-widest text-white/50">
                     0{proj.id} — Project
                   </p>
                 </div>
                 <h2
                   className="font-bold leading-[0.88] uppercase tracking-tight"
-                  style={{ fontSize: 'clamp(2rem, 7vw, 8rem)', wordBreak: 'break-word' }}
+                  style={{ fontSize: 'clamp(3rem, 10vw, 12rem)', wordBreak: 'break-word', lineHeight: '0.9' }}
                 >
                   {proj.title}
                 </h2>
@@ -485,7 +486,7 @@ export default function Portfolio() {
               {/* Description */}
               <p
                 className="leading-relaxed text-white/70"
-                style={{ fontSize: 'clamp(0.875rem, 1.3vw, 1.1rem)', maxWidth: '55ch' }}
+                style={{ fontSize: 'clamp(1.2rem, 2vw, 1.8rem)', maxWidth: '55ch', lineHeight: '1.6' }}
               >
                 {proj.description}
               </p>
@@ -495,7 +496,7 @@ export default function Portfolio() {
                 {proj.tech.map((t) => (
                   <span
                     key={t}
-                    className="text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 border border-white/20 text-white/80"
+                    className="text-sm sm:text-base lg:text-lg font-bold uppercase tracking-widest px-4 py-2 border border-white/20 text-white/80"
                     style={{ background: 'rgba(255,255,255,0.06)' }}
                   >
                     {t}
@@ -517,7 +518,7 @@ export default function Portfolio() {
                   href={proj.live}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 bg-white text-black text-xs font-bold uppercase tracking-widest px-6 py-3 hover:bg-gray-200 transition-colors w-full sm:w-auto"
+                  className="inline-flex items-center justify-center gap-3 bg-white text-black text-base sm:text-lg lg:text-xl font-bold uppercase tracking-widest px-8 py-4 hover:bg-gray-200 transition-colors w-full sm:w-auto"
                 >
                   <ExternalLink size={14} /> Live Demo
                 </a>
@@ -525,7 +526,7 @@ export default function Portfolio() {
                   href={proj.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 border border-white/30 text-white text-xs font-bold uppercase tracking-widest px-6 py-3 hover:bg-white/10 hover:border-white/60 transition-colors w-full sm:w-auto"
+                  className="inline-flex items-center justify-center gap-3 border border-white/30 text-white text-base sm:text-lg lg:text-xl font-bold uppercase tracking-widest px-8 py-4 hover:bg-white/10 hover:border-white/60 transition-colors w-full sm:w-auto"
                 >
                   <GithubIcon size={14} /> Code
                 </a>
@@ -543,6 +544,7 @@ export default function Portfolio() {
               </div>
             </div>
 
+          </div>
           </div>
         </FlowSection>
 
